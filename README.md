@@ -1,51 +1,23 @@
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/big-data-europe/docker-hadoop-spark-workbench)
+# Docker-based Hadoop / Spark clusters
 
-# How to use HDFS/Spark Workbench
+Simplified version (no Hive) based on: https://github.com/big-data-europe/docker-hadoop-spark-workbench
+Includes 3 workers to run on a single machine with no scale options. Some files could be unused (still not perfectly clean). 
 
-To start an HDFS/Spark Workbench:
+## How to use deploy
+
 ```
     docker-compose up -d
 ```
 
-docker-compose does not work to scale up spark-workers, for distributed setup see [swarm folder](./swarm) 
-
-## Starting workbench with Hive support
-
-Before starting the next command, check that the previous service is running correctly (with docker logs servicename).
-```
-docker-compose -f docker-compose-hive.yml up -d namenode hive-metastore-postgresql
-docker-compose -f docker-compose-hive.yml up -d datanode hive-metastore
-docker-compose -f docker-compose-hive.yml up -d hive-server
-docker-compose -f docker-compose-hive.yml up -d spark-master spark-worker spark-notebook hue
-```
-
-## Interfaces
+# Interfaces
 
 * Namenode: http://localhost:50070
-* Datanode: http://localhost:50075
+* Datanode-1: http://localhost:50001
+* Datanode-2: http://localhost:50002
+* Datanode-3: http://localhost:50003
 * Spark-master: http://localhost:8080
-* Spark-notebook: http://localhost:9001
 * Hue (HDFS Filebrowser): http://localhost:8088/home
 
-## Important
+# Important
 
 When opening Hue, you might encounter ```NoReverseMatch: u'about' is not a registered namespace``` error after login. I disabled 'about' page (which is default one), because it caused docker container to hang. To access Hue when you have such an error, you need to append /home to your URI: ```http://docker-host-ip:8088/home```
-
-## Docs
-* [Motivation behind the repo and an example usage @BDE2020 Blog](http://www.big-data-europe.eu/scalable-sparkhdfs-workbench-using-docker/)
-
-## Count Example for Spark Notebooks
-```
-val spark = SparkSession
-  .builder()
-  .appName("Simple Count Example")
-  .getOrCreate()
-
-val tf = spark.read.textFile("/data.csv")
-tf.count()
-```
-
-## Maintainer
-* Ivan Ermilov @earthquakesan
-
-Note: this repository was a part of BDE H2020 EU project and no longer actively maintained by the project participants. 
